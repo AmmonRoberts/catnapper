@@ -1,8 +1,17 @@
-def clear_screen
-    puts "\e[H\e[2J"
-end
+require_relative "methods.rb"
+require "json"
 
-
+hp=nil
+money=nil
+inventory={
+    :lockpick => false,
+    :crowbar => false,
+    :coke_count => 0,
+    :weapon => nil,
+    :ammo => 0
+}
+save_game(inventory)
+puts(inventory)
 
 puts("CATNAPPER\n\n")
 input = nil
@@ -22,7 +31,7 @@ while input != "q"
         gets
         
     end
-clear_screen
+    clear_screen
 end
 puts("THANKS FOR PLAYING")
 gets

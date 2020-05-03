@@ -13,14 +13,14 @@ def main_menu
             clear_screen
             new_game
             gets
-            break
+            # break
         elsif input == "l"
             clear_screen
             puts("LOAD GAME")
             inventory = load_game
             print(inventory)
             gets
-            break
+            # break
         end
         clear_screen
     end

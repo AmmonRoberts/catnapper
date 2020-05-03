@@ -12,10 +12,12 @@ while input != "q"
     input=gets.chomp.downcase
 
     if input == "s"
+        clear_screen
         puts("NEW GAME")
         gets
         
     elsif input == "l"
+        clear_screen
         puts("LOAD GAME")
         gets
         
@@ -23,3 +25,4 @@ while input != "q"
 clear_screen
 end
 puts("THANKS FOR PLAYING")
+gets

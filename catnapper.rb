@@ -1,9 +1,9 @@
 require_relative "methods.rb"
 require "json"
 
-hp=nil
-money=nil
-inventory={
+$hp=nil
+$inventory={
+    :money => nil,
     :lockpick => false,
     :crowbar => false,
     :coke_count => 0,
@@ -13,6 +13,3 @@ inventory={
 
 puts("CATNAPPER\n\n")
 main_menu
-
-puts("THANKS FOR PLAYING")
-gets

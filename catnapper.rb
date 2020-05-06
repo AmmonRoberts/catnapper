@@ -107,6 +107,7 @@ def new_game
     clear_screen
     puts "NEW GAME\n\nYour name is Andy.\n\nYou've just gotten out of the clink and you're looking to make some quick $$$$$$$$$s\n\nYour buddy, Dan, tells you about a lucerative new hustle called...\n\n"
     puts 'CATNAPPING'
+    gets
     $character={
         "hp" => 100,
         "money" => 50,
@@ -268,10 +269,10 @@ def explore
                     elsif input == "l"
                         clear_screen
                         if $character["lockpick"] == true
+                            puts "You made it in nice and quietly!"
+                                gets
                             r = rand(0..1)
                             if r == 0
-                                puts "You made it in nice and quietly!"
-                                gets
                                 get_spoils
                             elsif r == 1
                                 fight
@@ -296,40 +297,53 @@ def fight
     clear_screen
     puts "There's a dog at this house!"
     gets
+    clear_screen
     dog_HP = 100
     input = nil
     while 1
-        puts "FIGHT\n\nWhat would you like to do?F: Fight!\n\nD: Drink Coke!\n\nR: Run!\n\n"
+        puts "FIGHT\n\nWhat would you like to do?\n\nF: Fight!\n\nD: Drink Coke!\n\nR: Run!\n\n"
+        puts "Your HP: #{$character["hp"]}\n\nDog's HP: #{dog_HP}"
         input=gets.chomp.downcase
     
+        # Add stuff for expending ammo
         if input == "f"
             if $character["weapon"] == true
                 # Add something for hit/miss
-                damage = rand(5..15)
-                dog_HP -= damage
-                puts "The dog bit you and you took #{damage} damage!"
+                clear_screen
                 damage = rand(5..15)
                 $character["hp"] -= damage
+                puts "The dog bit you and you took #{damage} damage!"
+                gets
+                check_health
+                damage = rand(5..15)
+                dog_HP -= damage
                 puts "You hit the dog and it took #{damage} damage!"
+                gets
+                if dog_HP  <= 0
+                    puts "You've defeated the dog!\n\nNow go get your loot!"
+                    gets
+                    get_spoils
+                    base_menu
+                end
             else    
                 puts "You don't have a weapon to fight with!"
                 gets
             end
         elsif input == "d"
+            # Add a thing for the dog hitting you
             drink_coke
         elsif input =="r"
             clear_screen
             damage = rand(5..15)
             # Add something for hit/miss
             puts "As you were fleeing, the dog bit you and you took #{damage} damage!"
+            gets
             $character["hp"] -= damage
             check_health
             base_menu
         end
         clear_screen
     end
-
-    # get_spoils
 end
 
 def get_spoils
@@ -344,6 +358,7 @@ def get_spoils
 end
 
 def check_health
+    clear_screen
     if $character["hp"] <= 0
         puts "You have died..."
         gets

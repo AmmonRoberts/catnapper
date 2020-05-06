@@ -1,1 +1,10 @@
-{"hp":100,"money":397,"lockpick":true,"crowbar":false,"coke_count":5,"weapon":false,"ammo":0,"cats":28}
+{
+    "hp": 10,
+    "money": 247,
+    "lockpick": true,
+    "crowbar": true,
+    "coke_count": 5,
+    "weapon": true,
+    "ammo": 0,
+    "cats": 28
+}

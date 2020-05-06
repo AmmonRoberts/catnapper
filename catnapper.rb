@@ -54,7 +54,7 @@ end
 
 def main_menu
     clear_screen
-    
+    # Add an option for "how to play"
     input = nil
     while 1
         puts "MAIN MENU\n\nS: Start a new game\n\nL: Load an existing game\n\nQ: Exit Catnapper\n\n"

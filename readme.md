@@ -12,6 +12,8 @@ And here it is!
 ## Instructions:
 - Download all or just part of the repo
 - Run catnapper.rb using Ruby
+
 OR
+
 - Run catnapper.exe without ruby
 - Enjoy!

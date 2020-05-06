@@ -1,4 +1,4 @@
-#CATNAPPER
+# CATNAPPER
 
 Catnapper is a silly text adventure game I originally made in high school using TI-83 basic.
 I had a ton of fun making it back in the day, but lost most of the at some point, because I forgot to back it up, then my TI-83 reset...
@@ -9,9 +9,9 @@ I was wanting to expand my GitHub while also learning something new, so I decide
 
 And here it is!
 
-##Instructions:
--Download all or just part of the repo
--Run catnapper.rb using Ruby
+## Instructions:
+- Download all or just part of the repo
+- Run catnapper.rb using Ruby
 OR
--Run catnapper.exe without ruby
--Enjoy!
+- Run catnapper.exe without ruby
+- Enjoy!

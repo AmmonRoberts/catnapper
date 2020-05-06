@@ -90,16 +90,20 @@ end
 
 def load_game 
     clear_screen
-    # Needs to check if save.json exists
-    begin
-        f = File.read "save.json"
-        $character = JSON.parse f
-        puts "Game successfully loaded!"
+    if File.exist?("save.json")
+        begin
+            f = File.read "save.json"
+            $character = JSON.parse f
+            puts "Game successfully loaded!"
+            gets
+        rescue
+            puts "Something went wrong while loading your data.\n\nPlease make sure that save.json is not open."
+        end
+    else
+        puts "There was trouble finding your save file"
         gets
-    rescue
-        puts "Something went wrong while loading your data.\n\nPlease make sure that save.json is not open."
+        main_menu
     end
-        
     base_menu
 end
 
@@ -110,7 +114,7 @@ def new_game
     gets
     $character={
         "hp" => 100,
-        "money" => 50,
+        "money" => 100,
         "lockpick" => false,
         "crowbar" => false,
         "coke_count" => 5,
@@ -154,10 +158,11 @@ def visit_shop
     while 1
         clear_screen
         puts "SHOP"
-        puts "What would you like to purchase?\n\nC: Coke - $5 for 2\n\nA: ammo - $5 for 10\n\nR: Crowbar - $150\n\nL: Lockpick - $500\n\nM: .44 magnum - $500\n\nB: Back"
+        puts "What would you like to purchase?\n\nC: Coke - $5 for 2\n\nA: ammo - $20 for 10\n\nR: Crowbar - $150\n\nL: Lockpick - $500\n\nM: .44 magnum - $350\n\nB: Back"
         puts "You have $#{$character["money"]}"
         input=gets.chomp.downcase
         if input == "c"
+            # Purchase Coke
             clear_screen
             if $character["money"] > 5
                 $character["money"] -= 5 
@@ -169,9 +174,10 @@ def visit_shop
             gets
             visit_shop
         elsif input == "a"
+            # Purchase ammo
             clear_screen
-            if $character["money"] > 5
-                $character["money"] -= 5 
+            if $character["money"] > 20
+                $character["money"] -= 20 
                 $character["ammo"] += 10
                 puts "You've purchased 10 ammo!"
             else
@@ -180,6 +186,7 @@ def visit_shop
             gets
             visit_shop
         elsif input == "r"
+            # Purchase crowbar
             clear_screen
             if $character["money"] > 150 and $character["crowbar"] == false
                 $character["money"] -= 150 
@@ -191,6 +198,7 @@ def visit_shop
             gets
             visit_shop
         elsif input == "l"
+            # Purchase lockpick
             clear_screen
             if $character["money"] > 500 and $character["lockpick"] == false
                 $character["money"] -= 500 
@@ -202,9 +210,10 @@ def visit_shop
             gets
             visit_shop
         elsif input == "m"
+            # Purchase weapon
             clear_screen
-            if $character["money"] > 500 and $character["weapon"] == false
-                $character["money"] -= 500 
+            if $character["money"] > 350 and $character["weapon"] == false
+                $character["money"] -= 350 
                 $character["weapon"] = true
                 puts "You've purchased a .44 magnum!"
             else
@@ -248,6 +257,7 @@ def explore
                     input=gets.chomp.downcase
 
                     if input == "c"
+                        # Use crowbar - might wake someone up
                         clear_screen
                         if $character["crowbar"] == true
                             r = rand(0..2)
@@ -267,6 +277,7 @@ def explore
                             gets
                         end
                     elsif input == "l"
+                        # Use lockpick - better chance of a quiet entry
                         clear_screen
                         if $character["lockpick"] == true
                             puts "You made it in nice and quietly!"
@@ -302,23 +313,43 @@ def fight
     input = nil
     while 1
         puts "FIGHT\n\nWhat would you like to do?\n\nF: Fight!\n\nD: Drink Coke!\n\nR: Run!\n\n"
-        puts "Your HP: #{$character["hp"]}\n\nDog's HP: #{dog_HP}"
+        puts "Your HP: #{$character["hp"]}\n\nAmmo: #{$character["ammo"]}\n\nDog's HP: #{dog_HP}"
         input=gets.chomp.downcase
     
-        # Add stuff for expending ammo
         if input == "f"
-            if $character["weapon"] == true
-                # Add something for hit/miss
+            # If you have a weapon and ammo, you can fight
+            if $character["weapon"] == true and $character["ammo"] > 0
                 clear_screen
-                damage = rand(5..15)
-                $character["hp"] -= damage
-                puts "The dog bit you and you took #{damage} damage!"
-                gets
-                check_health
-                damage = rand(5..15)
-                dog_HP -= damage
-                puts "You hit the dog and it took #{damage} damage!"
-                gets
+
+                # Dog attacks first
+                r = rand(0..2)
+                if r == 0
+                    puts "The dog tried to bite you, but it missed!"
+                    gets
+                    clear_screen
+                else
+                    damage = rand(5..15)
+                    $character["hp"] -= damage
+                    puts "The dog bit you and you took #{damage} damage!"
+                    gets
+                    check_health
+                end
+
+                # You attack next
+                $character["ammo"] -= 1
+                r = rand(0..2)
+                if r == 0
+                    puts "Your shot missed!"
+                    gets
+                    clear_screen
+                else
+                    damage = rand(5..15)
+                    dog_HP -= damage
+                    puts "You hit the dog and it took #{damage} damage!"
+                    gets
+                end 
+
+                # If you beat the dog, move on and get stuff!
                 if dog_HP  <= 0
                     puts "You've defeated the dog!\n\nNow go get your loot!"
                     gets
@@ -326,20 +357,45 @@ def fight
                     base_menu
                 end
             else    
-                puts "You don't have a weapon to fight with!"
-                gets
+                clear_screen
+                if $character["weapon"] == false
+                    puts "You don't have a weapon to fight with!"
+                    gets
+                end
+                if $character["ammo"] < 1
+                    puts "You don't have any ammo!"
+                    gets
+                end
+                
             end
         elsif input == "d"
-            # Add a thing for the dog hitting you
+            # Drink some coke - this counts as an action though, so you might take some damage!
             drink_coke
+            r = rand(0..2)
+                if r == 0
+                    puts "The dog tried to bite you, but it missed!"
+                    gets
+                else
+                    damage = rand(5..15)
+                    $character["hp"] -= damage
+                    puts "The dog bit you and you took #{damage} damage!"
+                    gets
+                    check_health
+                end
         elsif input =="r"
+            # Run from the battle - the dog might still get a hit in!
             clear_screen
             damage = rand(5..15)
-            # Add something for hit/miss
-            puts "As you were fleeing, the dog bit you and you took #{damage} damage!"
-            gets
-            $character["hp"] -= damage
-            check_health
+            r = rand(0..2)
+            if r == 0
+                puts "The dog tried to bite you, but it missed!"
+                gets
+            else
+                puts "As you were fleeing, the dog bit you and you took #{damage} damage!"
+                gets
+                $character["hp"] -= damage
+                check_health
+            end
             base_menu
         end
         clear_screen
@@ -347,6 +403,7 @@ def fight
 end
 
 def get_spoils
+    # This gives you stuff after you successfully break in
     clear_screen
     m = rand(0..150)
     c = rand(0..5)
@@ -354,13 +411,25 @@ def get_spoils
     $character["cats"] += c
     puts "You found $#{m}\nand\n#{c} cats!"
     gets
+    check_win
     base_menu
 end
 
 def check_health
+    # Makes sure you aren't doing stuff after you die
     clear_screen
     if $character["hp"] <= 0
         puts "You have died..."
+        gets
+        main_menu
+    end
+end
+
+def check_win
+    # Makes sure you win if you earned it, of course!
+    clear_screen
+    if $character["cats"] >= 100
+        puts "YOU'VE WON THE GAME!"
         gets
         main_menu
     end
